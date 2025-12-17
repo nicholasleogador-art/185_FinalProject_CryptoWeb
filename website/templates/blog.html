@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>INTEL_BLOG // CIPHER_NET</title>
+    <style>
+        /* === GLOBAL SETTINGS (Same as Home/About) === */
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background-color: #050505;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+
+        /* MATRIX BACKGROUND */
+        canvas {
+            display: block; position: fixed; top: 0; left: 0; z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid #1a1a1a;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { font-size: 20px; font-weight: bold; border: 1px solid #00ff00; padding: 5px 10px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: #666; text-decoration: none; font-size: 14px; text-transform: uppercase; transition: 0.3s;
+        }
+        .nav-links a:hover { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        
+        /* Active State for Blog */
+        .nav-links a.active {
+            background-color: #00ff00; color: #000; padding: 5px 15px; border-radius: 4px; font-weight: bold;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* === MAIN LAYOUT === */
+        .container {
+            max-width: 800px; margin: 0 auto; padding: 40px 20px;
+            position: relative; z-index: 5;
+        }
+
+        /* HEADER SECTION */
+        .page-header { text-align: center; margin-bottom: 60px; }
+        h1.page-title {
+            font-size: 50px; margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            letter-spacing: 2px;
+        }
+        p.subtitle { color: #666; font-size: 14px; letter-spacing: 1px; }
+
+        /* === BLOG CARD STYLES === */
+        .blog-card {
+            background: rgba(0, 20, 0, 0.6); /* Very dark green tint */
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .blog-card:hover {
+            border-color: #00ff00;
+            background: rgba(0, 30, 0, 0.8);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.15);
+            transform: translateX(5px); /* Slight shift right on hover */
+        }
+
+        /* CARD TOP ROW (Date + Read Link) */
+        .card-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; font-size: 12px; color: #00aaaa; /* Cyan accent */
+        }
+        .read-link {
+            text-decoration: none; color: #00ff00; font-weight: bold; letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .read-link:hover { text-shadow: 0 0 8px #00ff00; }
+
+        /* CARD CONTENT */
+        h2.article-title {
+            margin: 0 0 10px 0; font-size: 24px; color: #e0e0e0;
+            transition: 0.3s;
+        }
+        .blog-card:hover h2.article-title { color: #00ff00; }
+
+        p.article-desc {
+            color: #888; line-height: 1.6; font-size: 14px; margin-bottom: 20px;
+        }
+
+        /* TAGS (Pills at bottom) */
+        .tags-container { display: flex; gap: 10px; }
+        .tag {
+            border: 1px solid #444; border-radius: 15px; padding: 4px 12px;
+            font-size: 11px; color: #888; background: rgba(0,0,0,0.5);
+        }
+        .blog-card:hover .tag { border-color: #00aaaa; color: #00aaaa; }
+
+        /* === LOAD MORE BUTTON === */
+        .load-more-container { text-align: center; margin-top: 50px; padding-bottom: 50px; }
+        .load-btn {
+            background: transparent; border: 1px solid #00ff00; color: #00ff00;
+            padding: 12px 30px; font-family: inherit; cursor: pointer;
+            font-size: 14px; letter-spacing: 2px; transition: 0.3s;
+        }
+        .load-btn:hover {
+            background: #00ff00; color: black; box-shadow: 0 0 15px #00ff00;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <nav>
+        <div class="nav-logo">&gt;_ CIPHER_NET</div>
+        <div class="nav-links">
+            <a href="{{ url_for('views.home') }}">Home</a>
+            <a href="{{ url_for('views.about') }}">About Us</a>
+            <a href="#" class="active">Blog</a> <a href="{{ url_for('views.accounts_list') }}">Accounts</a>
+            <a href="{{ url_for('views.contact') }}">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <h1 class="page-title">INTEL BLOG</h1>
+            <p class="subtitle">Tutorials, guides, and cryptography insights from the network.</p>
+        </div>
+
+        <div class="blog-card">
+            <div class="card-meta">
+                <span>📅 2024-01-15</span>
+                <a href="#" class="read-link">READ -></a>
+            </div>
+            <h2 class="article-title">Introduction to Caesar Cipher</h2>
+            <p class="article-desc">Learn the fundamentals of one of the oldest encryption techniques known to history. We break down the math behind the shift.</p>
+            <div class="tags-container">
+                <span class="tag">Beginner</span>
+                <span class="tag">Classical</span>
+            </div>
+        </div>
+
+        <div class="blog-card">
+            <div class="card-meta">
+                <span>📅 2024-01-10</span>
+                <a href="#" class="read-link">READ -></a>
+            </div>
+            <h2 class="article-title">Decoding Base64: A Complete Guide</h2>
+            <p class="article-desc">Master the art of Base64 encoding and decoding with practical examples. Understand why it is not encryption, but encoding.</p>
+            <div class="tags-container">
+                <span class="tag">Intermediate</span>
+                <span class="tag">Modern</span>
+            </div>
+        </div>
+
+        <div class="blog-card">
+            <div class="card-meta">
+                <span>📅 2024-01-05</span>
+                <a href="#" class="read-link">READ -></a>
+            </div>
+            <h2 class="article-title">Steganography: Hidden Messages in Images</h2>
+            <p class="article-desc">Discover how sensitive data can be concealed within ordinary image files without altering their visual appearance.</p>
+            <div class="tags-container">
+                <span class="tag">Advanced</span>
+                <span class="tag">Steganography</span>
+            </div>
+        </div>
+
+        <div class="blog-card">
+            <div class="card-meta">
+                <span>📅 2024-01-01</span>
+                <a href="#" class="read-link">READ -></a>
+            </div>
+            <h2 class="article-title">Binary to Text: Decoding Digital Secrets</h2>
+            <p class="article-desc">Convert binary code (0s and 1s) to readable text and uncover hidden messages in raw data streams.</p>
+            <div class="tags-container">
+                <span class="tag">Beginner</span>
+                <span class="tag">Digital</span>
+            </div>
+        </div>
+
+        <div class="load-more-container">
+            <button class="load-btn">LOAD MORE ARTICLES</button>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize; 
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0"; 
+            ctx.font = fontSize + "px arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

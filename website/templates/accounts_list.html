@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TARGET_SELECT // CIPHER_NET</title>
+    <style>
+        /* === GLOBAL SETTINGS === */
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background-color: #050505;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+
+        /* MATRIX BACKGROUND */
+        canvas {
+            display: block; position: fixed; top: 0; left: 0; z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid #1a1a1a;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { font-size: 20px; font-weight: bold; border: 1px solid #00ff00; padding: 5px 10px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: #666; text-decoration: none; font-size: 14px; text-transform: uppercase; transition: 0.3s;
+        }
+        .nav-links a:hover { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        
+        /* Active State */
+        .nav-links a.active {
+            background-color: #00ff00; color: #000; padding: 5px 15px; border-radius: 4px; font-weight: bold;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* === MAIN LAYOUT === */
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 40px 20px;
+            position: relative; z-index: 5; text-align: center;
+        }
+
+        /* HEADER */
+        .page-header { margin-bottom: 50px; }
+        .target-label { 
+            border: 1px solid #00ff00; display: inline-block; padding: 5px 15px; 
+            border-radius: 20px; font-size: 10px; letter-spacing: 2px; margin-bottom: 15px;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        h1.page-title {
+            font-size: 60px; margin: 0 0 10px 0; color: #00ff00;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            letter-spacing: 2px;
+        }
+        p.subtitle { color: #666; font-size: 14px; letter-spacing: 1px; max-width: 600px; margin: 0 auto; }
+
+        /* FILTER BAR */
+        .filter-bar { margin-bottom: 50px; }
+        .filter-btn {
+            background: transparent; border: 1px solid #333; color: #666;
+            padding: 8px 20px; margin: 0 5px; cursor: pointer; font-family: inherit;
+            font-size: 12px; transition: 0.3s; border-radius: 4px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #00ff00; color: #00ff00; background: rgba(0, 255, 0, 0.1);
+        }
+        .filter-btn.active { background: #00ff00; color: #000; font-weight: bold; }
+
+        /* === TARGET GRID === */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        /* TARGET CARD */
+        .target-card {
+            background: rgba(0, 15, 0, 0.85);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: left;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .target-card:hover {
+            border-color: #00ff00;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        
+        /* Card Status Dot (Top Right) */
+        .status-dot {
+            position: absolute; top: 20px; right: 20px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #00ff00; box-shadow: 0 0 5px #00ff00;
+        }
+
+        /* Card Content */
+        .card-icon { font-size: 30px; margin-bottom: 15px; color: #444; transition: 0.3s; }
+        .target-card:hover .card-icon { color: #00ff00; }
+
+        .target-name { 
+            font-size: 18px; color: #00aaaa; font-weight: bold; margin-bottom: 5px; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .target-id { font-size: 10px; color: #666; margin-bottom: 20px; display: block; }
+
+        /* Security Level Badge */
+        .security-level {
+            margin-bottom: 25px; border-top: 1px solid #333; padding-top: 15px;
+        }
+        .sec-label { font-size: 9px; color: #888; display: block; margin-bottom: 5px; }
+        .sec-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 10px; padding: 4px 8px; border-radius: 2px; border: 1px solid;
+        }
+
+        /* Levels Colors */
+        .sec-low { border-color: #00ff00; color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+        .sec-med { border-color: #00aaff; color: #00aaff; background: rgba(0, 170, 255, 0.1); }
+        .sec-high { border-color: #ff9900; color: #ff9900; background: rgba(255, 153, 0, 0.1); }
+
+        /* Login Button */
+        .login-btn {
+            display: block; width: 100%; padding: 12px; text-align: center;
+            border: 1px solid #333; color: #00ff00; text-decoration: none;
+            font-size: 12px; letter-spacing: 1px; transition: 0.3s;
+            background: transparent;
+
+            box-sizing: border-box; 
+        }
+        .login-btn:hover {
+            background: #00ff00; color: #000; font-weight: bold;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* INFO FOOTER */
+        .info-footer {
+            border: 1px solid #004400; background: rgba(0, 20, 0, 0.6);
+            padding: 15px; border-radius: 5px; display: inline-block;
+        }
+        .info-text { font-size: 11px; color: #00aaaa; }
+        .info-highlight { color: #00ff00; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <nav>
+        <div class="nav-logo">&gt;_ CIPHER_NET</div>
+        <div class="nav-links">
+            <a href="{{ url_for('views.home') }}">Home</a>
+            <a href="{{ url_for('views.about') }}">About Us</a>
+            <a href="{{ url_for('views.blog') }}">Blog</a>
+            <a href="#" class="active">Accounts</a> <a href="{{ url_for('views.contact') }}">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <span class="target-label">◎ TARGET SELECTION</span>
+            <h1 class="page-title">SELECT TARGET</h1>
+            <p class="subtitle">Choose your target wisely. Each account is protected by unique encryption protocols.</p>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active">▼ ALL</button>
+            <button class="filter-btn">🔒 LOCKED</button>
+            <button class="filter-btn">🔓 UNLOCKED</button>
+        </div>
+
+        <div class="target-grid">
+            
+            {% for acc in accounts %}
+            <div class="target-card">
+                <div class="status-dot"></div>
+                <div class="card-icon">🔒</div>
+                
+                <div class="target-name">{{ acc.name }}</div>
+                <span class="target-id">TARGET_ID: 000{{ acc.id }}</span>
+
+                <div class="security-level">
+                    <span class="sec-label">SECURITY LEVEL:</span>
+                    
+                    {% if acc.id == 1 %}
+                        <span class="sec-badge sec-low">● LOW (Caesar)</span>
+                    {% elif acc.id == 2 %}
+                        <span class="sec-badge sec-med">● MEDIUM (Binary)</span>
+                    {% elif acc.id == 3 %}
+                        <span class="sec-badge sec-high">● HIGH (Steganography)</span>
+                    {% else %}
+                        <span class="sec-badge sec-high">● CLASSIFIED</span>
+                    {% endif %}
+                </div>
+
+                <a href="{{ url_for('auth.puzzle_login', user_id=acc.id) }}" class="login-btn">
+                    ATTEMPT LOGIN &gt;
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="info-footer">
+            <span class="info-highlight">[INFO]</span> 
+            <span class="info-text">Start with LOW level targets to warm up your decryption skills.</span>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize; 
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0"; 
+            ctx.font = fontSize + "px arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

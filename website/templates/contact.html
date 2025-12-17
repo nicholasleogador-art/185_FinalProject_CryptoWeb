@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CONTACT_UPLINK // CIPHER_NET</title>
+    <style>
+        /* === GLOBAL SETTINGS (Consistent) === */
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background-color: #050505;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff00;
+            overflow-x: hidden;
+        }
+
+        /* MATRIX BACKGROUND */
+        canvas {
+            display: block; position: fixed; top: 0; left: 0; z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); border-bottom: 1px solid #1a1a1a;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { font-size: 20px; font-weight: bold; border: 1px solid #00ff00; padding: 5px 10px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: #666; text-decoration: none; font-size: 14px; text-transform: uppercase; transition: 0.3s;
+        }
+        .nav-links a:hover { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        
+        /* Active State for Contact */
+        .nav-links a.active {
+            background-color: #00ff00; color: #000; padding: 5px 15px; border-radius: 4px; font-weight: bold;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* === MAIN LAYOUT === */
+        .container {
+            max-width: 1100px; margin: 0 auto; padding: 40px 20px;
+            position: relative; z-index: 5;
+        }
+
+        /* PAGE HEADER */
+        .page-header { text-align: center; margin-bottom: 50px; }
+        h1.page-title {
+            font-size: 50px; margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            letter-spacing: 2px;
+        }
+        p.subtitle { color: #666; font-size: 14px; letter-spacing: 1px; }
+
+        /* === CONTACT GRID LAYOUT === */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr; /* Form is wider than info */
+            gap: 40px;
+        }
+
+        /* --- LEFT SIDE: FORM --- */
+        .form-box {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .section-header {
+            font-size: 12px; color: #00aaaa; font-weight: bold; 
+            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+        }
+        .dot { width: 8px; height: 8px; background: #00aaaa; border-radius: 50%; display: inline-block; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 10px; color: #666; margin-bottom: 8px; letter-spacing: 1px; }
+        
+        input, textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            color: #00ff00;
+            padding: 15px;
+            font-family: inherit;
+            box-sizing: border-box; /* Fixes padding issues */
+            transition: 0.3s;
+            border-radius: 4px;
+        }
+        input:focus, textarea:focus {
+            outline: none; border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            font-family: inherit; font-size: 14px; font-weight: bold; letter-spacing: 2px;
+            cursor: pointer; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .submit-btn:hover {
+            background: #00ff00; color: black; box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* --- RIGHT SIDE: INFO STACK --- */
+        .info-stack {
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        /* Small Info Cards */
+        .info-card {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex; align-items: center; gap: 20px;
+            transition: 0.3s;
+        }
+        .info-card:hover { border-color: #00ff00; transform: translateX(5px); }
+
+        .icon-box {
+            width: 40px; height: 40px; border: 1px solid #00ff00;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 18px; color: #00ff00; border-radius: 4px;
+        }
+        .info-content small { display: block; font-size: 9px; color: #666; margin-bottom: 4px; letter-spacing: 1px; }
+        .info-content div { font-size: 14px; color: #fff; }
+
+        /* Network Status Box (Bottom Right) */
+        .status-box {
+            margin-top: auto; /* Pushes to bottom */
+            background: rgba(0, 30, 0, 0.8);
+            border: 1px solid #00aaaa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .status-indicator {
+            color: #00ff00; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+        }
+        .blink-dot { width: 8px; height: 8px; background: #00ff00; border-radius: 50%; animation: blink 1s infinite; }
+        .status-desc { font-size: 11px; color: #888; line-height: 1.5; }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <nav>
+        <div class="nav-logo">&gt;_ CIPHER_NET</div>
+        <div class="nav-links">
+            <a href="{{ url_for('views.home') }}">Home</a>
+            <a href="{{ url_for('views.about') }}">About Us</a>
+            <a href="{{ url_for('views.blog') }}">Blog</a>
+            <a href="{{ url_for('views.accounts_list') }}">Accounts</a>
+            <a href="#" class="active">Contact</a> </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <h1 class="page-title">CONTACT US</h1>
+            <p class="subtitle">Establish a secure connection with our network operators.</p>
+        </div>
+
+        <div class="contact-grid">
+            
+            <div class="form-box">
+                <div class="section-header"><span class="dot"></span> SECURE MESSAGE</div>
+                
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">CALLSIGN</label>
+                        <input type="text" placeholder="Enter your name..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">COMM CHANNEL</label>
+                        <input type="email" placeholder="Enter your email..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">MESSAGE</label>
+                        <textarea rows="5" placeholder="Enter your encrypted message..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <span>✈</span> TRANSMIT MESSAGE
+                    </button>
+                </form>
+            </div>
+
+            <div class="info-stack">
+                
+                <div class="info-card">
+                    <div class="icon-box">✉</div>
+                    <div class="info-content">
+                        <small>SECURE CHANNEL</small>
+                        <div>contact@cipher.net</div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="icon-box">📍</div>
+                    <div class="info-content">
+                        <small>COORDINATES</small>
+                        <div style="color: #00aaaa;">CLASSIFIED</div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="icon-box">🕒</div>
+                    <div class="info-content">
+                        <small>RESPONSE TIME</small>
+                        <div>&lt; 24 HOURS</div>
+                    </div>
+                </div>
+
+                <div class="status-box">
+                    <div class="section-header"><span class="dot" style="background: #00ff00;"></span> NETWORK STATUS</div>
+                    <div class="status-indicator">
+                        <div class="blink-dot"></div> All systems operational
+                    </div>
+                    <div class="status-desc">
+                        Our secure channels are monitored 24/7. Expect a response within one rotation cycle.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize; 
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0"; 
+            ctx.font = fontSize + "px arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

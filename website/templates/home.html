@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CIPHER_NET // ESTABLISHED</title>
+    <style>
+        /* === GLOBAL RESET === */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #050505;
+            font-family: 'Courier New', Courier, monospace;
+            color: #00ff00;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        /* ========================================= */
+        /* 1. LOADING SCREEN STYLES (Keep this)      */
+        /* ========================================= */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .icon-box {
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            width: 80px; height: 80px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 40px; font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        h1.load-title {
+            font-size: 32px; letter-spacing: 5px; margin: 0 0 30px 0;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+        .progress-container {
+            width: 300px; height: 6px; background-color: #1a1a1a;
+            border-radius: 3px; margin-bottom: 20px; overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%; height: 100%; background-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00; transition: width 0.1s linear;
+        }
+        .status-text { font-size: 14px; color: #00cc00; margin-bottom: 40px; min-height: 20px; }
+        .footer-info { display: flex; gap: 15px; font-size: 10px; color: #004400; text-transform: uppercase; }
+        .blink-square { width: 8px; height: 8px; background-color: #00ff00; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* ========================================= */
+        /* 2. MAIN HOMEPAGE STYLES                   */
+        /* ========================================= */
+        #main-content {
+            display: none; /* Hidden until loaded */
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* MATRIX BACKGROUND */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 0; /* Behind everything */
+            opacity: 0.15; /* Subtle effect */
+        }
+
+        /* CONTENT OVERLAY */
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 90%); /* Vignette */
+        }
+
+        /* NAVBAR */
+        nav {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo { font-size: 20px; font-weight: bold; border: 1px solid #00ff00; padding: 5px 10px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: #666; text-decoration: none; font-size: 14px; text-transform: uppercase; transition: 0.3s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+        .nav-links a.btn-box {
+            border: 1px solid #00ff00; padding: 5px 15px; color: #00ff00; border-radius: 4px;
+        }
+
+        /* HERO SECTION (CENTER) */
+        .hero-section {
+            text-align: center;
+            margin-top: -50px; /* Slight offset up */
+        }
+        .secure-msg {
+            color: #00aaaa; /* Cyan color */
+            font-size: 12px; letter-spacing: 2px; margin-bottom: 10px;
+        }
+        .hero-title {
+            font-size: 70px; line-height: 1.1; margin: 0;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        .hero-title span.green { color: #00ff00; }
+        .hero-title span.blue { color: #00aaff; text-shadow: 0 0 20px rgba(0, 170, 255, 0.5); }
+        
+        .hero-sub {
+            color: #888; font-size: 16px; margin-top: 20px; letter-spacing: 1px;
+        }
+        
+        /* CTA BUTTON */
+        .start-btn {
+            margin-top: 40px;
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 15px 40px;
+            font-family: inherit;
+            font-size: 16px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .start-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+            letter-spacing: 4px; /* Expand effect */
+        }
+
+        /* FOOTER STATS */
+        .stats-footer {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            padding-bottom: 50px;
+        }
+        .stat-item { text-align: center; }
+        .stat-icon { font-size: 24px; margin-bottom: 5px; display: block; }
+        .stat-num { font-size: 24px; font-weight: bold; color: #fff; }
+        .stat-label { font-size: 10px; color: #666; letter-spacing: 1px; margin-top: 5px; }
+        .stat-live { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="icon-box">&gt;_</div>
+        <h1 class="load-title">CIPHER_NET</h1>
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="status-text" id="status-text">[ Establishing Secure Connection... ]</div>
+        <div class="footer-info">
+            <span>IP: 192.168.1.X <div class="blink-square" style="width:4px; height:4px; margin-left:5px;"></div></span>
+            <span>|</span> <span>PORT: 443</span> <span>|</span> <span>SSL: ACTIVE</span>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <canvas id="matrix"></canvas>
+
+        <div class="content-overlay">
+            <nav>
+                <div class="nav-logo">&gt;_ CIPHER_NET</div>
+                <div class="nav-links">
+                    <a href="{{ url_for('views.about') }}">About Us</a>
+                    <a href="{{ url_for('views.blog') }}">Blog</a>
+                    <a href="{{ url_for('views.accounts_list') }}" class="btn-box active">
+                        Accounts
+                    </a>
+                    <a href="{{ url_for('views.contact') }}">Contact</a>
+                </div>
+            </nav>
+
+            <div class="hero-section">
+                <div class="secure-msg">&gt; SECURE CONNECTION ESTABLISHED</div>
+                
+                <h1 class="hero-title">
+                    <span class="green">WELCOME TO</span><br>
+                    <span class="blue">THE NETWORK</span>
+                </h1>
+                
+                <p class="hero-sub">Decrypt the ciphers. Breach the systems. Prove your worth.</p>
+
+                <a href="{{ url_for('views.accounts_list') }}">
+                    <button class="start-btn">&gt; BEGIN INFILTRATION &lt;</button>
+                </a>
+            </div>
+
+            <div class="stats-footer">
+                <div class="stat-item">
+                    <span class="stat-icon">🛡️</span>
+                    <div class="stat-num">4</div>
+                    <div class="stat-label">TARGETS</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">⚡</span>
+                    <div class="stat-num">12</div>
+                    <div class="stat-label">CIPHERS</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">&gt;_</span>
+                    <div class="stat-num stat-live">LIVE</div>
+                    <div class="stat-label">ACTIVE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. LOADING SCREEN LOGIC ---
+        const progressBar = document.getElementById('progress-bar');
+        const statusText = document.getElementById('status-text');
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        let width = 0;
+        
+        const messages = ["[ Bypassing firewalls... ]", "[ Handshaking... ]", "[ Decrypting keys... ]", "[ Access Granted. ]"];
+
+        const interval = setInterval(() => {
+            width += Math.random() * 5; 
+            if (width > 20 && width < 50) statusText.innerText = messages[0];
+            if (width > 50 && width < 80) statusText.innerText = messages[1];
+            if (width > 80 && width < 95) statusText.innerText = messages[2];
+
+            progressBar.style.width = width + '%';
+
+            if (width >= 100) {
+                clearInterval(interval);
+                statusText.innerText = messages[3];
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    startMatrix(); // Start the rain effect only after load
+                }, 800);
+            }
+        }, 100);
+
+        // --- 2. MATRIX RAIN EFFECT ---
+        function startMatrix() {
+            const canvas = document.getElementById('matrix');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize; 
+            const drops = [];
+
+            for (let x = 0; x < columns; x++) drops[x] = 1;
+
+            function draw() {
+                // Black with opacity to create "trail" effect
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = "#0F0"; // Green text
+                ctx.font = fontSize + "px arial";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters[Math.floor(Math.random() * letters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(draw, 33);
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('matrix');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+
+</body>
+</html>
