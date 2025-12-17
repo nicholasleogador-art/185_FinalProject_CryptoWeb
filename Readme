@@ -71,3 +71,46 @@ CIPHER_NET/
 │       └── ...
 │
 └── README.md              # Documentation
+
+
+🎮 Operational Guide
+Phase 1: Target Selection
+Navigate to the Accounts page. You will see a list of targets with varying security levels.
+
+James Ceaser (Low): Requires shifting letters to reveal the password.
+
+Bin Askal (Medium): Requires translating binary to ASCII.
+
+Classified Image (High): Requires external file manipulation.
+
+Phase 2: The Image Puzzle (Target ID: 03)
+Navigate to the Classified Image login page.
+
+Click the orange [ DOWNLOAD ENCRYPTED DATA ] button to acquire encrypted_image.bin.
+
+Write a Python script (or use the provided tool) to XOR the file using the password found in the source code or clues.
+
+Key: download
+
+Once decrypted, the image will reveal visual confirmation. Enter the key into the login field to penetrate the system.
+
+Phase 3: Exfiltration
+Upon successful login, download the Mission Report text file to confirm your objective is complete.
+
+🤝 Contributing
+Agents are welcome to improve the system.
+
+Fork the Project.
+
+Create your Feature Branch (git checkout -b feature/NewCipher).
+
+Commit your Changes (git commit -m 'Add Vigenère Cipher Module').
+
+Push to the Branch (git push origin feature/NewCipher).
+
+Open a Pull Request.
+
+📜 License
+Distributed under the MIT License. See LICENSE for more information.
+
+WARNING: This system is for educational purposes only. Unauthorized access to actual secure systems is illegal. Stay safe, Agent.
