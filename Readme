@@ -1,0 +1,73 @@
+# 🔐 CIPHER_NET
+
+![Status](https://img.shields.io/badge/STATUS-OPERATIONAL-brightgreen?style=for-the-badge)
+![Clearance](https://img.shields.io/badge/CLEARANCE-TOP%20SECRET-red?style=for-the-badge)
+![Version](https://img.shields.io/badge/VERSION-1.0.0-blue?style=for-the-badge)
+
+**CIPHER_NET** is an immersive **Capture The Flag (CTF)** web application designed to simulate a hostile digital environment. Users act as agents penetrating a secure network by solving varying levels of cryptographic puzzles—from classical ciphers to modern file-based steganography.
+
+---
+
+## 📸 Interface Visuals
+
+| **Infiltration Point** | **Target Selection** |
+|:---:|:---:|
+| ![Home Page](website/static/images/image_ba5966.jpg) | ![Accounts Page](website/static/images/image_b9ed1d.jpg) |
+| *Immersive Matrix rain entry interface* | *Select targets based on security clearance* |
+
+| **Decryption Interface** | **Artifact Interception** |
+|:---:|:---:|
+| ![Login Page](website/static/images/image_b9eca4.jpg) | ![Artifact Download](website/static/images/image_b9ed5c.png) |
+| *Solve ciphers to bypass security protocols* | *Intercept and decrypt binary files locally* |
+
+---
+
+## 🚀 Features
+
+* **🕵️ Immersive Hacker UI:** Custom "Matrix Rain" background using HTML5 Canvas, glowing CRT typography, and CSS animations.
+* **🧩 Multi-Level Cryptography Puzzles:**
+    * **Level 1 (Low):** Caesar Cipher (Classical shift encryption).
+    * **Level 2 (Medium):** Binary Translation (Raw data decoding).
+    * **Level 3 (High):** XOR Image Steganography (File corruption and restoration).
+* **📂 Modular Architecture:** Built on Flask Blueprints for scalable code organization (Auth, Views, Logic).
+* **💾 Mock Database System:** Lightweight, file-based data structure (no SQL setup required) for easy deployment and testing.
+* **🏆 Mission Logs:** Successful hacks generate downloadable "Mission Reports" (`.txt`) as proof of penetration.
+
+---
+
+## 🛠️ Built With
+
+* ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) **Python 3.10+**
+* ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white) **Flask Framework**
+* ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) **HTML5 / CSS3**
+* ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) **Canvas API**
+
+---
+
+## 📂 Project Structure
+
+```text
+CIPHER_NET/
+│
+├── run.py                 # Application Entry Point
+├── setup_puzzle.py        # Script to encrypt initial game assets (XOR)
+│
+├── website/               # Main Application Package
+│   ├── __init__.py        # App Factory & Blueprint Registration
+│   ├── auth.py            # Authentication & Puzzle Logic Routes
+│   ├── views.py           # Static Page Routes (Home, About, Blog)
+│   ├── data.py            # Mock Database (Puzzle Data)
+│   ├── utils.py           # Cryptographic Functions (XOR Algorithm)
+│   │
+│   ├── static/            # Static Assets
+│   │   ├── css/           # Stylesheets
+│   │   └── images/        # Encrypted artifacts & assets
+│   │
+│   └── templates/         # HTML Templates (Jinja2)
+│       ├── home.html
+│       ├── login_puzzle.html
+│       ├── accounts_list.html
+│       ├── success_image.html
+│       └── ...
+│
+└── README.md              # Documentation
